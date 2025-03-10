@@ -52,7 +52,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               controller: email,
             ),
             SizedBox(height: 15),
-            Button(ontap: fwPassword, title: 'Reset'),
+            Button(ontap: fwPassword, title: 'Reset',loading: false,enabled: false,),
           ],
         ),
       ),

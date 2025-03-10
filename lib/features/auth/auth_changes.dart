@@ -1,5 +1,6 @@
 import 'package:baka/features/auth/presentation/default_auth_page.dart';
-import 'package:baka/features/home/presentation/home.dart';
+import 'package:baka/features/auth/presentation/screens/verify_email.dart';
+import 'package:baka/features/home/presentation/screen/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class AuthChanges extends StatefulWidget {
 }
 
 class _AuthChangesState extends State<AuthChanges> {
+  final user = FirebaseAuth.instance.currentUser;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,7 +20,7 @@ class _AuthChangesState extends State<AuthChanges> {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            return Home();
+            return VerifyEmail();
           } else {
             return DefaultAuthPage();
           }

@@ -30,7 +30,9 @@ class _SignUpPageState extends State<SignUpPage> {
       if (password.text == cpassword.text) {
         try {
           showDialog(
+            barrierDismissible: false,
             context: context,
+
             builder: (context) {
               return Center(child: CircularProgressIndicator());
             },
@@ -82,7 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
               isSelected: true,
               controller: cpassword,
             ),
-            Button(ontap: register, title: 'Sign up'),
+            Button(ontap: register, title: 'Sign up',loading: false,enabled: false,),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

@@ -58,6 +58,18 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
+  Future<AppUser?> verifyEmail() async {
+    try {
+      await firebaseAuth.currentUser!.sendEmailVerification();
+      return null;
+
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+
+  @override
   Future<AppUser?> resetPassword(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);

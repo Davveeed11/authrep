@@ -1,7 +1,7 @@
-import 'package:baka/features/auth/presentation/signUpPage/sign_up_page.dart';
+import 'package:baka/features/auth/presentation/screens/sign_up_page.dart';
 import 'package:flutter/material.dart';
 
-import 'loginpage/login_page.dart';
+import 'screens/login_page.dart';
 
 class DefaultAuthPage extends StatefulWidget {
   const DefaultAuthPage({super.key});

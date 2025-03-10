@@ -4,12 +4,14 @@ class TextFieldWidget extends StatefulWidget {
   final String hintText;
   final bool isSelected;
   final TextEditingController controller;
+  final void Function(String)? onChanged;
 
   const TextFieldWidget({
     super.key,
     required this.hintText,
     required this.isSelected,
     required this.controller,
+    this.onChanged
   });
 
   @override
@@ -21,6 +23,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onChanged: widget.onChanged,
       controller: widget.controller,
       decoration: InputDecoration(
         border: OutlineInputBorder(

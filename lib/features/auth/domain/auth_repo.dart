@@ -10,6 +10,8 @@ abstract class AuthRepo {
   );
 
   Future<void> signOut();
+  Future<AppUser?> verifyEmail();
+  // Future<AppUser?> resendVerifyEmail();
 
   Future<AppUser?> resetPassword(String email);
 

@@ -14,17 +14,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              authRepo.signOut();
-            },
-            icon: Icon(Icons.logout,color: Colors.red,),
-          ),
-        ],
-      ),
+     floatingActionButton: FloatingActionButton(onPressed: () {
+       authRepo.signOut();
+     },),
     );
   }
 }

@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 
-class Button extends StatefulWidget {
+class Button extends StatelessWidget {
   final Function()? ontap;
   final String title;
+  final bool loading;
+  final bool enabled;
 
-  const Button({super.key, this.ontap, required this.title});
+  const Button({
+    super.key,
+    this.ontap,
+    required this.title,
+    required this.loading,
+    required this.enabled,
+  });
 
-  @override
-  State<Button> createState() => _ButtonState();
-}
-
-class _ButtonState extends State<Button> {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return FilledButton(
-      onPressed: widget.ontap,
-      style: FilledButton.styleFrom(minimumSize: Size(double.infinity, 50)),
-      child: Text(widget.title),
+      onPressed: enabled ? ontap : null,
+      style: FilledButton.styleFrom(
+        minimumSize: Size(double.infinity, 50),
+        backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: enabled ? 1.0 : 0.3),
+      ),
+      child: loading ? CircularProgressIndicator(color: theme.colorScheme.primary,) : Text(title, style: TextStyle(
+        color: theme.colorScheme.primary
+      ),),
     );
   }
 }
