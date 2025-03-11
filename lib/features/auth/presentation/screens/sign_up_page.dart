@@ -109,7 +109,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           auth.state.email.isNotEmpty &&
                           auth.state.password.isNotEmpty &&
                           auth.state.name.isNotEmpty &&
-                          auth.state.cpassword.isNotEmpty,
+                          auth.state.cPassword.isNotEmpty,
                     );
                   },
                 ),
