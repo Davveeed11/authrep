@@ -85,8 +85,8 @@ class _LoginPageState extends State<LoginPage> {
                     Consumer<AuthProvider>(
                       builder: (BuildContext context, auth, Widget? child) {
                         return Button(
-                          ontap: ()  {
-                             auth.login();
+                          ontap: () {
+                            auth.login();
                             print('object');
                           },
                           title: 'Login',
