@@ -22,7 +22,10 @@ class AuthProvider extends ChangeNotifier {
     state.password = password;
     notifyListeners();
   }
-
+  setName(String name) {
+    state.name = name;
+    notifyListeners();
+  }
   Future<void> login() async {
     state.isLoading = true;
     _errorMessage = null; // Clear previous error
@@ -31,6 +34,49 @@ class AuthProvider extends ChangeNotifier {
     try {
       print('pre-login');
       await authRepoImpl.signInWithEmailAndPassword(state.email, state.password);
+      print('post-login');
+
+      // If signInWithEmailAndPassword succeeds, you might want to fetch
+      // additional user data or perform other actions here.
+
+      state.isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      // Handle Firebase Auth exceptions specifically
+      print('Login error: $e');
+      state.isLoading = false;
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'user-not-found':
+            _errorMessage = 'No user found for that email.';
+            break;
+          case 'wrong-password':
+            _errorMessage = 'Wrong password provided for that user.';
+            break;
+          case 'invalid-email':
+            _errorMessage = 'The email address is badly formatted.';
+            break;
+        // Add more cases for other FirebaseAuthException codes
+          default:
+            _errorMessage = 'An error occurred during login: ${e.message}';
+        }
+      } else {
+        _errorMessage = 'An unexpected error occurred: $e';
+      }
+      notifyListeners();
+    }
+  }
+
+
+
+  Future<void> signUp() async {
+    state.isLoading = true;
+    _errorMessage = null; // Clear previous error
+    notifyListeners();
+
+    try {
+      print('pre-login');
+      await authRepoImpl.signUpWithEmailAndPassword(state.email, state.password,state.name);
       print('post-login');
 
       // If signInWithEmailAndPassword succeeds, you might want to fetch
