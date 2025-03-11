@@ -26,6 +26,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return ChangeNotifierProvider(
       // top level, wrap the widget with this
       create: (BuildContext context) => AuthProvider(),
@@ -50,11 +52,11 @@ class _LoginPageState extends State<LoginPage> {
                       hintText: 'Email',
                       isSelected: false,
                       controller: email,
-                      onChanged: provider.setEmail,
+                      onChanged: context.read<AuthProvider>().setEmail,
                     ),
 
                     TextFieldWidget(
-                      onChanged: provider.setPassword,
+                      onChanged: context.read<AuthProvider>().setPassword,
                       hintText: 'password',
                       isSelected: true,
                       controller: password,
@@ -80,13 +82,21 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ],
                     ),
-                    Button(
-                      ontap: provider.login,
-                      title: 'Login',
-                      loading: state.isLoading,
-                      enabled:
-                          state.isLoading == false &&
-                          state.email.isNotEmpty && state.password.isNotEmpty
+                    Consumer<AuthProvider>(
+                      builder: (BuildContext context, auth, Widget? child) {
+                        return Button(
+                          ontap: ()  {
+                             auth.login();
+                            print('object');
+                          },
+                          title: 'Login',
+                          loading: auth.state.isLoading,
+                          enabled:
+                              !auth.state.isLoading &&
+                              auth.state.email.isNotEmpty &&
+                              auth.state.password.isNotEmpty,
+                        );
+                      },
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

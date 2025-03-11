@@ -1,57 +1,66 @@
+import 'package:baka/features/auth/data/auth_repo_impl.dart';
 import 'package:baka/features/auth/domain/auth_repo.dart';
 import 'package:baka/features/auth/presentation/manager/auth_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart'; // Import for Material widgets
 
 class AuthProvider extends ChangeNotifier {
-  final state = AuthState();
-  final repo = AuthRepo;
+  final AuthState state = AuthState();
+  final AuthRepoImpl authRepoImpl = AuthRepoImpl(); // Instantiate directly
+
+  String? _errorMessage; // To store error messages
+
+  String? get errorMessage => _errorMessage; // Getter for error message
 
   setEmail(String email) {
-    //used to set the email variable
     state.email = email;
     notifyListeners();
   }
 
   setPassword(String password) {
-    //used to set the password
     state.password = password;
     notifyListeners();
   }
 
-  login() async {
+  Future<void> login() async {
     state.isLoading = true;
+    _errorMessage = null; // Clear previous error
     notifyListeners();
-    //repo.login(.....,.....)
-    //repo.login.....
-    /*for(var i = 0; i < 5; i++){
-      await Future.delayed(const Duration(seconds: 1));
-      print(i);
-    }*/
-    print('pre-delay');
-    await Future.delayed(Duration(seconds: 3));
-    print('post-delay');
 
-    /*EXAMPLE OF REPO CALL FROM YOUR PROVIDER
-    * repo.login().then(value){
-    *
-    * final result = value.getOrElse((error){
-    * //do something with the error
-    * state.isLoading = false;
-    * notifyListeners();
-    * });
-    *
-    * if(result != null){
-    * //do something with the result as it is not equal to null
-    * state.isLoading = false;
-    * notifyListeners();
-    * }
-    *
-    * })
-    * */
+    try {
+      print('pre-login');
+      await authRepoImpl.signInWithEmailAndPassword(state.email, state.password);
+      print('post-login');
 
-    //this will happen in the body of the repo call, when it returns a
-    //successful result or a failure result
-    state.isLoading = false;
-    notifyListeners();
+      // If signInWithEmailAndPassword succeeds, you might want to fetch
+      // additional user data or perform other actions here.
+
+      state.isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      // Handle Firebase Auth exceptions specifically
+      print('Login error: $e');
+      state.isLoading = false;
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'user-not-found':
+            _errorMessage = 'No user found for that email.';
+            break;
+          case 'wrong-password':
+            _errorMessage = 'Wrong password provided for that user.';
+            break;
+          case 'invalid-email':
+            _errorMessage = 'The email address is badly formatted.';
+            break;
+        // Add more cases for other FirebaseAuthException codes
+          default:
+            _errorMessage = 'An error occurred during login: ${e.message}';
+        }
+      } else {
+        _errorMessage = 'An unexpected error occurred: $e';
+      }
+      notifyListeners();
+    }
   }
 }
