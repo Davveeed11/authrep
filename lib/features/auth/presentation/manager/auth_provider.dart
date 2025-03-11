@@ -22,6 +22,10 @@ class AuthProvider extends ChangeNotifier {
     state.password = password;
     notifyListeners();
   }
+  setCPassword(String confirmPassword) {
+    state.cpassword = confirmPassword;
+    notifyListeners();
+  }
   setName(String name) {
     state.name = name;
     notifyListeners();

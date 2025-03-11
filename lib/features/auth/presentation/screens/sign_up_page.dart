@@ -92,13 +92,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   hintText: 'Re-type password',
                   isSelected: true,
                   controller: cpassword,
-                  onChanged: context.read<AuthProvider>().setPassword,
+                  onChanged: context.read<AuthProvider>().setCPassword,
                 ),
                 Consumer<AuthProvider>(
                   builder: (context, auth, child) {
                     return Button(
                       ontap: () {
                         auth.signUp();
+                        print('object');
                       },
                       title: 'Sign up',
                       loading: auth.state.isLoading,

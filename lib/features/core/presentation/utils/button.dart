@@ -21,11 +21,12 @@ class Button extends StatelessWidget {
       onPressed: enabled ? ontap : null,
       style: FilledButton.styleFrom(
         minimumSize: Size(double.infinity, 50),
-        backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: enabled ? 1.0 : 0.3),
+        backgroundColor:enabled? Colors.blueAccent:Colors.grey.shade400,
       ),
-      child: loading ? CircularProgressIndicator(color: theme.colorScheme.primary,) : Text(title, style: TextStyle(
-        color: theme.colorScheme.primary
-      ),),
+      child:
+          loading
+              ? CircularProgressIndicator(color: theme.colorScheme.primary)
+              : Text(title, style: TextStyle(color: theme.colorScheme.primary)),
     );
   }
 }
