@@ -1,8 +1,6 @@
 import 'package:baka/features/auth/data/auth_repo_impl.dart';
-import 'package:baka/features/auth/domain/auth_repo.dart';
 import 'package:baka/features/auth/presentation/manager/auth_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'; // Import for Material widgets
 
 class AuthProvider extends ChangeNotifier {
@@ -22,14 +20,17 @@ class AuthProvider extends ChangeNotifier {
     state.password = password;
     notifyListeners();
   }
+
   setCPassword(String confirmPassword) {
     state.cPassword = confirmPassword;
     notifyListeners();
   }
+
   setName(String name) {
     state.name = name;
     notifyListeners();
   }
+
   Future<void> login() async {
     state.isLoading = true;
     _errorMessage = null; // Clear previous error
@@ -37,7 +38,10 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       print('pre-login');
-      await authRepoImpl.signInWithEmailAndPassword(state.email, state.password);
+      await authRepoImpl.signInWithEmailAndPassword(
+        state.email,
+        state.password,
+      );
       print('post-login');
 
       // If signInWithEmailAndPassword succeeds, you might want to fetch
@@ -60,7 +64,7 @@ class AuthProvider extends ChangeNotifier {
           case 'invalid-email':
             _errorMessage = 'The email address is badly formatted.';
             break;
-        // Add more cases for other FirebaseAuthException codes
+          // Add more cases for other FirebaseAuthException codes
           default:
             _errorMessage = 'An error occurred during login: ${e.message}';
         }
@@ -70,8 +74,6 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-
 
   Future<void> signUp() async {
     state.isLoading = true;
@@ -80,7 +82,11 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       print('pre-login');
-      await authRepoImpl.signUpWithEmailAndPassword(state.email, state.password,state.name);
+      await authRepoImpl.signUpWithEmailAndPassword(
+        state.email,
+        state.password,
+        state.name,
+      );
       print('post-login');
 
       // If signInWithEmailAndPassword succeeds, you might want to fetch
@@ -103,7 +109,7 @@ class AuthProvider extends ChangeNotifier {
           case 'invalid-email':
             _errorMessage = 'The email address is badly formatted.';
             break;
-        // Add more cases for other FirebaseAuthException codes
+          // Add more cases for other FirebaseAuthException codes
           default:
             _errorMessage = 'An error occurred during login: ${e.message}';
         }
@@ -112,5 +118,67 @@ class AuthProvider extends ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+
+  Future<void> signOut() async {
+    state.isLoading = true;
+    _errorMessage = null; //// Clear previous error
+    await authRepoImpl.signOut();
+    notifyListeners();
+  }
+
+  Future<void> resetPassword(BuildContext context) async {
+    state.isLoading = true;
+    notifyListeners();
+    _errorMessage = null; // Clear previous error
+    try {
+      await authRepoImpl.resetPassword(state.email);
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Container(
+              height: MediaQuery.sizeOf(context).height / 4,
+              width: MediaQuery.sizeOf(context).width / 1.3,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.check, size: 40, color: Colors.green),
+                  Text(
+                    'Reset Password',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'Successful check your email',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } on FirebaseAuthException catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(_errorMessage = e.message.toString()),
+          );
+        },
+      );
+    }
+
+    state.isLoading = false;
+    notifyListeners();
   }
 }

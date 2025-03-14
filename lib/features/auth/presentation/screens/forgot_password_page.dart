@@ -1,9 +1,9 @@
+import 'package:baka/features/auth/presentation/manager/auth_provider.dart';
 import 'package:baka/features/core/presentation/utils/button.dart';
+import 'package:baka/features/core/presentation/utils/round_button_widget.dart';
 import 'package:baka/features/core/presentation/utils/text_field_widget.dart';
 import 'package:flutter/material.dart';
-
-import '../../data/auth_repo_impl.dart';
-import '../../domain/auth_repo.dart';
+import 'package:provider/provider.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -15,47 +15,74 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController email = TextEditingController();
 
-  void fwPassword() async {
-    final AuthRepo authRepo = AuthRepoImpl();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Center(child: CircularProgressIndicator());
-      },
-    );
-    try {
-      await authRepo.resetPassword(email.text);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Reset successful')));
-      Navigator.pop(context);
-    } catch (e) {
-      Navigator.pop(context);
-
-      print(e.toString());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: Column(
-          children: [
-            SizedBox(height: 15),
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => AuthProvider(),
+      builder: (context, child) {
+        return SafeArea(
+          child: Scaffold(
+            // appBar: AppBar(),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Column(
+                spacing: 10,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 15),
 
-            TextFieldWidget(
-              hintText: 'Email',
-              isSelected: false,
-              controller: email,
+                  Row(
+                    spacing: 20,
+                    children: [
+                      RoundbuttonWidget(
+                        icons: Icons.arrow_back,
+                        ontap: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      Text(
+                        'Forgot Password',
+                        style: TextStyle(
+                          fontSize: 23,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15),
+
+                  Text(
+                    'To reset password fill in your email',
+                    style: TextStyle(fontSize: 23, fontWeight: FontWeight.w600),
+                  ),
+                  TextFieldWidget(
+                    hintText: 'Email',
+                    isSelected: false,
+                    controller: email,
+                    onChanged: context.read<AuthProvider>().setEmail,
+                  ),
+                  SizedBox(height: 10),
+                  Consumer<AuthProvider>(
+                    builder: (context, authProvider, child) {
+                      return Button(
+                        ontap: () {
+                          authProvider.resetPassword(context);
+                          email.clear();
+                        },
+                        title: 'Reset',
+                        loading: authProvider.state.isLoading,
+                        enabled:
+                            authProvider.state.email.isNotEmpty &&
+                            !authProvider.state.isLoading,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-            SizedBox(height: 15),
-            Button(ontap: fwPassword, title: 'Reset',loading: false,enabled: false,),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

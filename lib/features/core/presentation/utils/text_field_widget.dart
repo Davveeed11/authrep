@@ -11,7 +11,7 @@ class TextFieldWidget extends StatefulWidget {
     required this.hintText,
     required this.isSelected,
     required this.controller,
-    this.onChanged
+    this.onChanged,
   });
 
   @override
